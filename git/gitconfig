@@ -1,0 +1,7 @@
+[user]
+	name = BenjamenMeyer
+[core]
+	editor = vi
+[color]
+	ui = true
+	pager = true

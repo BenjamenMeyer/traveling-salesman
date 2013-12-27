@@ -1,0 +1,41 @@
+" turn file syntax highlighting on
+syntax on
+set hlsearch
+" turn file type detection on
+filetype on
+set autoindent
+" set fold method to syntax
+set foldmethod=syntax
+
+" QSOURCE_ROOT and QSOURCE_BUILD are used by one of my employers
+" that has a specification on tabs/spaces, so we'll use them to
+" determine if this is a work or non-work environment
+if $QSOURCE_ROOT != "" || $QBUILD_ROOT != ""
+" set whitespace to RAXATL/Backup-Agent Coding Standards
+	"   Tab=2 spaces, Soft-Tab=2spaces, Shift Width=spaces, Convert Tabs to Spaces
+	set ts=2 sts=2 sw=2 expandtab
+	"   Still we want 4 spaces for Python files, but we'll keep the tab->space conversion
+	autocmd BufRead,BufNewFile *.py set ts=4 sts=4 sw=4
+	"   Still we want 4 spaces for the VIMRC files and tabs
+	autocmd BufRead,BufNewFile $MYVIMRC set ts=4 sts=4 sw=4 noexpandtab
+else
+	" By default, I prefer using tabs instead of spaces
+	set ts=4 sts=4 sw=4 noexpandtab
+endif
+
+" Turn off auto-wrap
+set nowrap
+
+" Auto-Command functionality
+if has("autocmd")
+
+	" Auto-reload the VIMRC file if it is written to disk in a VIM session so changes
+	" are immediately available for use
+	autocmd BufWritePost $MYVIMRC source $MYVIMRC 
+
+endif
+
+" Keyboard Bindings
+map <F5> :make DEBUG=true
+map <F6> :make
+map <F7> :copen<CR>
