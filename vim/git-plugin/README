@@ -1,0 +1,17 @@
+git-diff
+========
+
+Some extra functionality for working with git under vim
+
+- :GitCachedDiff
+
+	- e.g git diff --cached
+
+- :GitStagedDiff
+
+	- e.g git diff --cached
+
+- :GitDiff
+
+	- e.g git diff
+
