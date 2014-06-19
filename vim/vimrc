@@ -1,3 +1,5 @@
+" Turn the mouse on
+set mouse=a
 " turn file syntax highlighting on
 syntax on
 set hlsearch
