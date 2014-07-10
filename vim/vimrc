@@ -13,7 +13,7 @@ set foldmethod=syntax
 " that has a specification on tabs/spaces, so we'll use them to
 " determine if this is a work or non-work environment
 if $QSOURCE_ROOT != "" || $QBUILD_ROOT != ""
-" set whitespace to RAXATL/Backup-Agent Coding Standards
+  " set whitespace to RAXATL/Backup-Agent Coding Standards
 	"   Tab=2 spaces, Soft-Tab=2spaces, Shift Width=spaces, Convert Tabs to Spaces
 	set ts=2 sts=2 sw=2 expandtab
 	"   Still we want 4 spaces for Python files, but we'll keep the tab->space conversion
