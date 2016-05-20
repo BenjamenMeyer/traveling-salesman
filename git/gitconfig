@@ -5,3 +5,11 @@
 [color]
 	ui = true
 	pager = true
+[merge]
+  tool = vimdiff
+  conflictstyle = diff3
+
+[merge "vimdiff-git"]
+  cmd = vimdiff $BASE $LOCAL $REMOTE $MERGED
+  trustExitCode = true
+  keepBackup = false
