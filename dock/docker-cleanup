@@ -1,0 +1,10 @@
+#!/bin/bash                                                                                                                                                                 
+
+# remove shutdown containers
+docker rm $(docker ps -aq)                                                                                                                                                  
+
+# remove dangling images                                                                                                                                                    
+docker rmi $(docker images -aqf dangling=true)
+
+# remove dangling volumes                                                                                                                                                           
+docker volume rm $(docker volume ls -qf dangling=true)
