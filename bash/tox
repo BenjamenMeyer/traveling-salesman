@@ -1,0 +1,44 @@
+#!/bin/bash
+
+SCRIPT_DIRNAME=$(dirname ${0})
+TOOL_HOME="${SCRIPT_DIRNAME}/.tools"
+
+source "${TOOL_HOME}/argparse.sh"
+source "${TOOL_HOME}/python.sh"
+
+FINAL_SCRIPT_ARGS=""
+LOCAL_ARG_OPTION=""
+for LOCAL_SCRIPT_ARG in ${UNPARSED_ARGS}
+do
+	if [ -z "${LOCAL_ARG_OPTION}" ]; then
+		case "${LOCAL_SCRIPT_ARG}" in
+			*)
+				if [ -z "${FINAL_SCRIPT_ARGS}" ]; then
+					FINAL_SCRIPT_ARGS="${LOCAL_SCRIPT_ARG}"
+				else
+					FINAL_SCRIPT_ARGS="${FINAL_SCRIPT_ARGS} ${LOCAL_SCRIPT_ARG}"
+				fi
+				;;
+		esac
+	else
+		case "${LOCAL_ARG_OPTION}" in
+			*)
+				LOCAL_ARG_OPTION=""
+				;;
+		esac
+	fi
+done
+
+TOX_VENV=$(getToolVirtualEnv tox)
+
+createToolVirtualEnv "${TOX_VENV}" "${REBUILD_VENV}"
+install_packages_in_env=$?
+
+activateToolVirtualEnv "${TOX_VENV}"
+
+if [ ${install_packages_in_env} -eq 2 ]; then
+	installPackages "--upgrade" "pip" "tox"
+fi
+
+tox "${FINAL_SCRIPT_ARGS}"
+exit $?

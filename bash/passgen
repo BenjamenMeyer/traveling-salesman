@@ -1,0 +1,97 @@
+#!/bin/bash
+
+SCRIPT_DIRNAME=$(dirname ${0})
+TOOL_HOME="${SCRIPT_DIRNAME}/.tools"
+
+source "${TOOL_HOME}/argparse.sh"
+source "${TOOL_HOME}/python.sh"
+
+let -i PASSGEN_PASSWORD_LENGTH=30
+PASSGEN_USE_PUNCTIONATION="True"
+PASSGEN_USE_DIGITS="True"
+PASSGEN_USE_LETTERS="True"
+PASSGEN_LETTER_CASE="both"
+
+ARG_PASSWORD_LENGTH="--length"
+ARG_DISABLE_PUNCTUATION="--no-punctuation"
+ARG_DISABLE_DIGITS="--no-digits"
+ARG_DISABLE_LETTERS="--no-letters"
+ARG_LETTER_CASING="--letter-casing"
+LOCAL_ARG_OPTION=""
+for LOCAL_SCRIPT_ARG in ${UNPARSED_ARGS}
+do
+	if [ -z "${LOCAL_ARG_OPTION}" ]; then
+		case "${LOCAL_SCRIPT_ARG}" in
+			"${ARG_PASSWORD_LENGTH}")
+				LOCAL_ARG_OPTION="${ARG_PASSWORD_LENGTH}"
+				;;
+			"${ARG_DISABLE_PUNCTUATION}")
+				PASSGEN_USE_PUNCTIONATION="False"
+				;;
+			"${ARG_DISABLE_DIGITS}")
+				PASSGEN_USE_DIGITS="True"
+				;;
+			"${ARG_DISABLE_LETTERS}")
+				PASSGEN_USE_LETTERS="True"
+				;;
+			"${ARG_LETTER_CASING}")
+				LOCAL_ARG_OPTION="${ARG_LETTER_CASING}"
+				;;
+			*)
+				;;
+		esac
+	else
+		case "${LOCAL_ARG_OPTION}" in
+			"${ARG_PASSWORD_LENGTH}")
+				let -i PASSGEN_PASSWORD_LENGTH=${LOCAL_SCRIPT_ARG}
+				LOCAL_ARG_OPTION=""
+				;;
+			"${ARG_LETTER_CASING}")
+				case "${LOCAL_SCRIPT_ARG}" in
+					"both")
+						PASSGEN_LETTER_CASE="both"
+						;;
+					"upper")
+						PASSGEN_LETTER_CASE="upper"
+						;;
+					"lower")
+						PASSGEN_LETTER_CASE="lower"
+						;;
+					*)
+						echo "Error: Letter casing must be one of - 'both', 'upper', or 'lower'"
+						exit 1
+						;;
+				esac
+				LOCAL_ARG_OPTION=""
+				;;
+			*)
+				LOCAL_ARG_OPTION=""
+				;;
+		esac
+	fi
+done
+
+PASSGEN_VENV=$(getToolVirtualEnv passgen)
+
+createToolVirtualEnv "${PASSGEN_VENV}" "${REBUILD_VENV}"
+install_packages_in_env=$?
+
+activateToolVirtualEnv "${PASSGEN_VENV}"
+
+if [ ${install_packages_in_env} -eq 2 ]; then
+	installPackages "passgen"
+fi
+
+python -c "
+import passgen
+
+print(
+	passgen.passgen(
+		length=${PASSGEN_PASSWORD_LENGTH},
+		punctuation=${PASSGEN_USE_PUNCTIONATION},
+		digits=${PASSGEN_USE_DIGITS},
+		letters=${PASSGEN_USE_LETTERS},
+		case='${PASSGEN_LETTER_CASE}'
+	)
+)
+"
