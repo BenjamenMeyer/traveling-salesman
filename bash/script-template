@@ -1,6 +1,12 @@
 #!/bin/bash
-SCRIPT_TOOL_NAME="tox"
-SCRIPT_TOOL_DEPENDENCIES="--upgradepiptox"
+# Steps:
+# 1. replace `templateScriptName` with the script name
+SCRIPT_TOOL_NAME="templateScriptName"
+# 2. set the dependencies needed to run the script
+SCRIPT_TOOL_DEPENDENCIES=""
+# 3. add any local parameters
+#	NOTE: See `argparse.sh` for what parameters are already in use
+# 4. go to the end of the script and set the command to execute
 
 # unfortunately we have to have this local to the script
 # b/c it's used to find the path where the real script
@@ -75,5 +81,5 @@ fi
 
 # finally, run our command passing in any remaining arguments
 # passing it's result back to the caller
-tox "${FINAL_SCRIPT_ARGS}"
+echo "TODO: Command goes here"
 exit $?

@@ -67,6 +67,6 @@ function activateToolVirtualEnv()
 function installPackages()
 	{
 	local PACKAGES_TO_INSTALL="$*"
-	pip install "${PACKAGES_TO_INSTALL}"
+	pip install ${PACKAGES_TO_INSTALL}
 	return $?
 	}
