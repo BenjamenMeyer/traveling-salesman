@@ -14,7 +14,7 @@ do
 				REBUILD_VENV="yes"
 				;;
 			*)
-				if [ -z "${UNPARSED_ARG}" ]; then
+				if [ -z "${UNPARSED_ARGS}" ]; then
 					UNPARSED_ARGS="${GLOBAL_SCRIPT_ARG}"
 				else
 					UNPARSED_ARGS="${UNPARSED_ARGS} ${GLOBAL_SCRIPT_ARG}"
@@ -36,4 +36,3 @@ do
 		esac
 	fi
 done
-

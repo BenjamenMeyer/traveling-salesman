@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPT_TOOL_NAME="tox"
-SCRIPT_TOOL_DEPENDENCIES="--upgradepiptox"
+SCRIPT_TOOL_DEPENDENCIES="--upgrade pip tox"
 
 # unfortunately we have to have this local to the script
 # b/c it's used to find the path where the real script
@@ -75,5 +75,5 @@ fi
 
 # finally, run our command passing in any remaining arguments
 # passing it's result back to the caller
-tox "${FINAL_SCRIPT_ARGS}"
+tox ${FINAL_SCRIPT_ARGS}
 exit $?
