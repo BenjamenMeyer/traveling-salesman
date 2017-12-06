@@ -31,12 +31,21 @@ source "${TOOL_HOME}/python.sh"
 # have already been taken out
 FINAL_SCRIPT_ARGS=""
 LOCAL_ARG_OPTION=""
+
+ARG_REBUILD_TOX="--r"
 for LOCAL_SCRIPT_ARG in ${UNPARSED_ARGS}
 do
 	# detect argument names
 	# set `LOCAL_ARG_OPTION` to `LOCAL_SCRIPT_ARG` if there's a value to the parameter
 	if [ -z "${LOCAL_ARG_OPTION}" ]; then
 		case "${LOCAL_SCRIPT_ARG}" in
+			"${ARG_REBUILD_TOX}")
+				if [ -z "${FINAL_SCRIPT_ARGS}" ]; then
+					FINAL_SCRIPT_ARGS="-r"
+				else
+					FINAL_SCRIPT_ARGS="${FINAL_SCRIPT_ARGS} -r"
+				fi
+				;;
 			*)
 				if [ -z "${FINAL_SCRIPT_ARGS}" ]; then
 					FINAL_SCRIPT_ARGS="${LOCAL_SCRIPT_ARG}"
