@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# unfortunately we have to have this local to the script
+# b/c it's used to find the path where the real script
+# functions exist
+function getScriptDir()
+	{
+	local SCRIPT_NAME=$(dirname "${1}")
+	while [ -h "${SCRIPT_NAME}" ];
+	do
+		SCRIPT_NAME_LINK=$(readlink "${SCRIPT_NAME}")
+		SCRIPT_NAME=$(dirname "${SCRIPT_NAME_LINK}")
+	done
+	echo "${SCRIPT_NAME}"
+	}
+# script home dir
+SCRIPT_DIRNAME=$(getScriptDir "${BASH_SOURCE[0]}")
+
+TOOL_HOME="${SCRIPT_DIRNAME}/.tools"
+PYSCRIPT_NOME="${TOOL_HOME}/py-tools"
+
+python ${PYSCRIPT_NOME}/timesheet-calc.py ${@}
