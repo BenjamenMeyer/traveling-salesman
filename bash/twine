@@ -1,0 +1,88 @@
+#!/bin/bash
+SCRIPT_TOOL_NAME="twine"
+SCRIPT_TOOL_DEPENDENCIES="--upgrade pip twine"
+
+# unfortunately we have to have this local to the script
+# b/c it's used to find the path where the real script
+# functions exist
+function getScriptDir()
+	{
+	local SCRIPT_NAME=$(dirname "${1}")
+	while [ -h "${SCRIPT_NAME}" ];
+	do
+		SCRIPT_NAME_LINK=$(readlink "${SCRIPT_NAME}")
+		SCRIPT_NAME=$(dirname "${SCRIPT_NAME_LINK}")
+	done
+	echo "${SCRIPT_NAME}"
+	}
+# script home dir
+SCRIPT_DIRNAME=$(getScriptDir "${BASH_SOURCE[0]}")
+# script function home dir
+TOOL_HOME="${SCRIPT_DIRNAME}/.tools"
+
+# pull in the functions we need
+# argparse also does a little manipulation of the script
+# arguments for the virtualenv
+source "${TOOL_HOME}/argparse.sh"
+source "${TOOL_HOME}/python.sh"
+
+# parse any of our arguments after the does its thing
+# with the arguments; we don't want to parse any that
+# have already been taken out
+FINAL_SCRIPT_ARGS=""
+LOCAL_ARG_OPTION=""
+
+ARG_REBUILD_TOX="--r"
+for LOCAL_SCRIPT_ARG in ${UNPARSED_ARGS}
+do
+	# detect argument names
+	# set `LOCAL_ARG_OPTION` to `LOCAL_SCRIPT_ARG` if there's a value to the parameter
+	if [ -z "${LOCAL_ARG_OPTION}" ]; then
+		case "${LOCAL_SCRIPT_ARG}" in
+			"${ARG_REBUILD_TOX}")
+				if [ -z "${FINAL_SCRIPT_ARGS}" ]; then
+					FINAL_SCRIPT_ARGS="-r"
+				else
+					FINAL_SCRIPT_ARGS="${FINAL_SCRIPT_ARGS} -r"
+				fi
+				;;
+			*)
+				if [ -z "${FINAL_SCRIPT_ARGS}" ]; then
+					FINAL_SCRIPT_ARGS="${LOCAL_SCRIPT_ARG}"
+				else
+					FINAL_SCRIPT_ARGS="${FINAL_SCRIPT_ARGS} ${LOCAL_SCRIPT_ARG}"
+				fi
+				;;
+		esac
+	else
+		# extract any values to the parameter
+		# clear LOCAL_ARG_OPTION when done
+		case "${LOCAL_ARG_OPTION}" in
+			*)
+				LOCAL_ARG_OPTION=""
+				;;
+		esac
+	fi
+done
+
+# get the tox environment path
+SCRIPT_VENV=$(getToolVirtualEnv "${SCRIPT_TOOL_NAME}")
+
+# create it if it doesn't exist yet or if the parameter was
+# passed in then rebuild the environment. If the environment
+# is created then the result is 2 so we know to install stuff
+createToolVirtualEnv "${SCRIPT_VENV}" "${REBUILD_VENV}"
+install_packages_in_env=$?
+
+# activate the virtualenv
+activateToolVirtualEnv "${SCRIPT_VENV}"
+
+# install any packages for a new environment
+if [ ${install_packages_in_env} -eq 2 ]; then
+	installPackages ${SCRIPT_TOOL_DEPENDENCIES}
+fi
+
+# finally, run our command passing in any remaining arguments
+# passing it's result back to the caller
+twine ${FINAL_SCRIPT_ARGS}
+exit $?
