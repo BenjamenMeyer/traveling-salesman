@@ -1,0 +1,12 @@
+startup_message off
+bind x
+bind ^x
+hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%< %= %H"
+defscrollback 4000
+
+shell "/bin/bash"
+screen -t cmd 0
+
+#screen -t <name> <number>
+# NOTE: \012 is essentially pressing [ENTER]
+#stuff "<command to run>\012"
